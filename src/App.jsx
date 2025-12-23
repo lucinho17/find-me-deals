@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { lightTheme, darkTheme } from './themes';
 
 const GlobalStyle = createGlobalStyle`
   body {
-    background-color: #f0f2f5;
-    color: #333;
+    background-color: ${(props) => props.theme.body};
+    color: ${(props) => props.theme.text};
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 20px;
+    transition: all 0.25s linear;
   }
 `;
 
@@ -32,7 +34,9 @@ const Header = styled.header`
 const SearchInput = styled.input`
   padding: 0.8rem 1rem;
   border-radius: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid ${(props) => props.theme.input.border};
+  background-color: ${(props) => props.theme.cardBackground};
+  color: ${(props) => props.theme.text};
   margin-right: 0.5rem;
   font-size: 1rem;
   width: 60%;
@@ -48,14 +52,14 @@ const SearchButton = styled.button`
   padding: 0.8rem 1.5rem;
   border-radius: 20px;
   border: none;
-  background-color: #007bff;
-  color: white;
+  background-color: ${(props) => props.theme.button.background};
+  color: ${(props) => props.theme.button.text};
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: ${(props) => props.theme.button.hover};
   }
   
     @media (max-width: 768px) {
@@ -73,7 +77,7 @@ const GameList = styled.div`
 `;
 
 const GameCard = styled.div`
-  background: #fff;
+  background: ${(props) => props.theme.cardBackground};
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   padding: 1.5rem;
@@ -112,55 +116,83 @@ const GamePrice = styled.p`
 const ViewDealLink = styled.a`
   display: inline-block;
   text-decoration: none;
-  background-color: #ffc107;
-  color: #212529;
+  background-color: ${(props) => props.theme.dealLink.background};
+  color: ${(props) => props.theme.dealLink.text};
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: bold;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #e0a800;
+    background-color: ${(props) => props.theme.dealLink.hover};
   }
+`;
+
+const ThemeToggler = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: none;
+  background-color: ${(props) => props.theme.cardBackground};
+  color: ${(props) => props.theme.text};
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 function App() {
   const [gameName, setGameName] = useState('');
   const [gameData, setGameData] = useState([]);
+  const [theme, setTheme] = useState('light');
+
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
 
   function catchDeal() {
     fetch(`https://www.cheapshark.com/api/1.0/games?title=${gameName}`)
       .then((response) => response.json())
       .then(data => setGameData(data));
   }
-
+  
   return (
-    <>
-      <GlobalStyle />
-      <AppWrapper>
-        <Header>
-          <h1>Find Me Some Deals</h1>
-          <label htmlFor='game' style={{ display: 'none' }}>Game Name:</label>
-          <SearchInput type='text' id='game' name='game' value={gameName} onChange={(e) => setGameName(e.target.value)} placeholder="Enter a game name..." />
-          <SearchButton onClick={catchDeal}>Find Best Deal</SearchButton>
-        </Header>
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <>
+        <GlobalStyle />
+        <ThemeToggler onClick={toggleTheme}>
+          {theme === 'light' ? '🌙' : '☀️'}
+        </ThemeToggler>
+        <AppWrapper>
+          <Header>
+            <h1>Find Me Some Deals</h1>
+            <label htmlFor='game' style={{ display: 'none' }}>Game Name:</label>
+            <SearchInput type='text' id='game' name='game' value={gameName} onChange={(e) => setGameName(e.target.value)} placeholder="Enter a game name..." />
+            <SearchButton onClick={catchDeal}>Find Best Deal</SearchButton>
+          </Header>
 
-        <GameList>
-          {gameData.map((game) => (
-            <GameCard key={game.gameID}>
-              <GameImage src={game.thumb} alt={game.external} />
-              <GameInfo>
-                <GameTitle>{game.external}</GameTitle>
-                <GamePrice>Cheapest Price: ${game.cheapest}</GamePrice>
-                <ViewDealLink href={`https://www.cheapshark.com/redirect?dealID=${game.cheapestDealID}`} target='_blank' rel="noopener noreferrer">
-                  View Deal
-                </ViewDealLink>
-              </GameInfo>
-            </GameCard>
-          ))}
-        </GameList>
-      </AppWrapper>
-    </>
+          <GameList>
+            {gameData.map((game) => (
+              <GameCard key={game.gameID}>
+                <GameImage src={game.thumb} alt={game.external} />
+                <GameInfo>
+                  <GameTitle>{game.external}</GameTitle>
+                  <GamePrice>Cheapest Price: ${game.cheapest}</GamePrice>
+                  <ViewDealLink href={`https://www.cheapshark.com/redirect?dealID=${game.cheapestDealID}`} target='_blank' rel="noopener noreferrer">
+                    View Deal
+                  </ViewDealLink>
+                </GameInfo>
+              </GameCard>
+            ))}
+          </GameList>
+        </AppWrapper>
+      </>
+    </ThemeProvider>
   );
 }
 
