@@ -150,7 +150,9 @@ function App() {
   const [gameName, setGameName] = useState('');
   const [gameData, setGameData] = useState([]);
   const [theme, setTheme] = useState('light');
-
+  const [order, setOrder] = useState('asc');
+  
+  
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
@@ -166,10 +168,33 @@ function App() {
         if (data.length === 0) {
           alert("No deals found for this game. Please try another title.");
         }
+        
         setGameData(data);
+        
       });
     
   }
+
+  
+  function toggleOrder() {
+    setOrder(order === 'asc' ? 'desc' : 'asc');
+  }
+
+  
+  function sortAsc() {
+    toggleOrder();
+    
+    if(order === 'asc') {
+      const sortedData = [...gameData].sort((a, b) => parseFloat(a.cheapest) - parseFloat(b.cheapest));
+      setGameData(sortedData);
+    }
+    else {
+      const sortedData = [...gameData].sort((a, b) => parseFloat(b.cheapest) - parseFloat(a.cheapest));
+      setGameData(sortedData);
+    }
+  }
+
+ 
   
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
@@ -184,7 +209,11 @@ function App() {
             <label htmlFor='game' style={{ display: 'none' }}>Game Name:</label>
             <SearchInput type='text' id='game' name='game' value={gameName} onChange={(e) => setGameName(e.target.value)} placeholder="Enter a game name..." />
             <SearchButton onClick={catchDeal}>Find Best Deal</SearchButton>
+            
           </Header>
+
+          <SearchButton onClick={sortAsc}>Sort by price{order === 'asc' ? ' (Low to High)' : ' (High to Low)'}</SearchButton>
+          
 
           <GameList>
             {gameData.map((game) => (
