@@ -156,9 +156,19 @@ function App() {
   };
 
   function catchDeal() {
+    if(gameName.trim() === '') {
+      alert("Please enter a game name.");
+      return;
+    }
     fetch(`https://www.cheapshark.com/api/1.0/games?title=${gameName}`)
       .then((response) => response.json())
-      .then(data => setGameData(data));
+      .then((data) => {
+        if (data.length === 0) {
+          alert("No deals found for this game. Please try another title.");
+        }
+        setGameData(data);
+      });
+    
   }
   
   return (
