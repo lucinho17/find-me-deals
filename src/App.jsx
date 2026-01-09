@@ -1,17 +1,5 @@
 import { useState } from 'react';
-import styled, { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme } from './themes';
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${(props) => props.theme.body};
-    color: ${(props) => props.theme.text};
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    transition: all 0.25s linear;
-  }
-`;
+import styled from 'styled-components';
 
 const AppWrapper = styled.div`
   max-width: 800px;
@@ -128,35 +116,11 @@ const ViewDealLink = styled.a`
   }
 `;
 
-const ThemeToggler = styled.button`
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 0.5rem;
-  border-radius: 50%;
-  border: none;
-  background-color: ${(props) => props.theme.cardBackground};
-  color: ${(props) => props.theme.text};
-  cursor: pointer;
-  font-size: 1.2rem;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
 function App() {
   const [gameName, setGameName] = useState('');
   const [gameData, setGameData] = useState([]);
-  const [theme, setTheme] = useState('light');
   const [order, setOrder] = useState('asc');
   
-  
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
-
   function catchDeal() {
     if(gameName.trim() === '') {
       alert("Please enter a game name.");
@@ -197,12 +161,7 @@ function App() {
  
   
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <>
-        <GlobalStyle />
-        <ThemeToggler onClick={toggleTheme}>
-          {theme === 'light' ? '🌙' : '☀️'}
-        </ThemeToggler>
         <AppWrapper>
           <Header>
             <h1>Find Me Some Deals</h1>
@@ -231,7 +190,6 @@ function App() {
           </GameList>
         </AppWrapper>
       </>
-    </ThemeProvider>
   );
 }
 
