@@ -3,6 +3,7 @@ import { Route, Routes, Link } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import App from './App.jsx';
 import Stores from './Stores.jsx';
+import BestDeals from './BestDeals.jsx';
 import { lightTheme, darkTheme } from './themes.js';
 
 const GlobalStyle = createGlobalStyle`
@@ -76,6 +77,7 @@ function Routing() {
       <Nav>
         <NavLink to="/find-me-deals/">Deals</NavLink>
         <NavLink to="/find-me-deals/stores">Stores</NavLink>
+        <NavLink to="/find-me-deals/best-deals">Best Deals</NavLink>
       </Nav>
       <Routes>
         <Route
@@ -85,6 +87,10 @@ function Routing() {
         <Route
           path="/find-me-deals/stores"
           element={<Stores />}
+        />
+        <Route
+          path="/find-me-deals/best-deals"
+          element={<BestDeals />}
         />
       </Routes>
     </ThemeProvider>
