@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
-
+import Spin from './Spinner.jsx';
 const StoresWrapper = styled.div`
   max-width: 960px;
   margin: 0 auto;
@@ -49,11 +49,13 @@ const StoreLogo = styled.img`
 
 function Stores() {
     const [stores, setStores] = useState([]);
+    const [spinner, setSpinner] = useState(true);
 
     useEffect(() => {
         fetch('https://www.cheapshark.com/api/1.0/stores')
             .then(response => response.json())
             .then(data => setStores(data.filter(store => store.isActive)))
+            .then(() => setSpinner(false))
             .catch(error => alert('Error fetching stores:', error));
     }, []);
 
@@ -64,12 +66,14 @@ function Stores() {
                     <h1>Available Stores</h1>
                 </Header>
                 <StoreList>
-                    {stores.map((store) => (
+                    {spinner ? <Spin /> :(
+                  
+                    stores.map((store) => (
                         <StoreCard key={store.storeID}>
                             <StoreLogo src={`https://www.cheapshark.com${store.images.logo}`} alt={`${store.storeName} Logo`} />
                             <StoreName>{store.storeName}</StoreName>
                         </StoreCard>
-                    ))}
+                    )))}
                 </StoreList>
             </StoresWrapper>
         </>
