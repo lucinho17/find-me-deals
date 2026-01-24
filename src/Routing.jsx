@@ -5,7 +5,7 @@ import App from './App.jsx';
 import Stores from './Stores.jsx';
 import BestDeals from './BestDeals.jsx';
 import { lightTheme, darkTheme } from './themes.js';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${(props) => props.theme.body};

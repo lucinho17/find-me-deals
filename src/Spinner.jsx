@@ -2,7 +2,9 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function Spin() {
   return (
-    <Spinner animation="border" variant="primary" />
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Spinner animation="border" variant="primary" />
+        </div>
   );
 }
 
