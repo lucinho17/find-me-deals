@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import Spin from './Spinner.jsx';
 
 const BestDealsWrapper = styled.div`
   max-width: 960px;
@@ -23,6 +24,10 @@ const DealsGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1.5rem;
   margin-top: 2rem;
+`;
+
+const SpinnerWrapper = styled.div`
+  grid-column: 1 / -1;
 `;
 
 const DealCard = styled.div`
@@ -86,11 +91,15 @@ const ViewDealLink = styled.a`
 
 
 function BestDeals() {
+
     const [deals, setDeals] = useState([]);
+    const [spinner, setSpinner] = useState(true);
+
     useEffect(() => {
         fetch('https://www.cheapshark.com/api/1.0/deals?sortBy=Savings&pageSize=21')
             .then(response => response.json())
             .then(data => setDeals(data))
+            .then(() => setSpinner(false))
             .catch(error => alert('Error fetching deals:', error));
     }, []);
 
@@ -100,20 +109,21 @@ function BestDeals() {
                 <h1>Best Deals</h1>
             </Header>
             <DealsGrid>
-                {deals.map(deal => (
-                    <DealCard key={deal.dealID}>
-                        <div>
-                            <DealImage src={deal.thumb} alt={deal.title} />
-                            <DealTitle>{deal.title}</DealTitle>
-                            <OriginalPrice>Original Price: ${deal.normalPrice}</OriginalPrice>
-                            <SalePrice>Discounted Price: ${deal.salePrice}</SalePrice>
-                            <Savings>Savings: {Math.round(deal.savings)}%</Savings>
-                        </div>
-                        <ViewDealLink href={`https://www.cheapshark.com/redirect?dealID=${deal.dealID}`} target='_blank' rel="noopener noreferrer">
-                            View Deal
-                        </ViewDealLink>
-                    </DealCard>
-                ))}
+                {spinner ? <SpinnerWrapper><Spin /></SpinnerWrapper> : (
+                  deals.map(deal => (
+                      <DealCard key={deal.dealID}>
+                          <div>
+                              <DealImage src={deal.thumb} alt={deal.title} />
+                              <DealTitle>{deal.title}</DealTitle>
+                              <OriginalPrice>Original Price: ${deal.normalPrice}</OriginalPrice>
+                              <SalePrice>Discounted Price: ${deal.salePrice}</SalePrice>
+                              <Savings>Savings: {Math.round(deal.savings)}%</Savings>
+                          </div>
+                          <ViewDealLink href={`https://www.cheapshark.com/redirect?dealID=${deal.dealID}`} target='_blank' rel="noopener noreferrer">
+                              View Deal
+                          </ViewDealLink>
+                      </DealCard>
+                )))}
             </DealsGrid>
         </BestDealsWrapper>
     )

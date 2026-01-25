@@ -25,6 +25,7 @@ const Nav = styled.nav`
   padding: 1rem;
   background-color: ${(props) => props.theme.cardBackground};
   border-radius: 8px;
+  width: 100%;
 `;
 
 const NavLink = styled(Link)`

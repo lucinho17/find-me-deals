@@ -25,6 +25,10 @@ const StoreList = styled.div`
   margin-top: 2rem;
 `;
 
+const SpinnerWrapper = styled.div`
+  grid-column: 1 / -1;
+`;
+
 const StoreCard = styled.div`
   background: ${(props) => props.theme.cardBackground};
   border-radius: 8px;
@@ -66,7 +70,7 @@ function Stores() {
                     <h1>Available Stores</h1>
                 </Header>
                 <StoreList>
-                    {spinner ? <Spin /> :(
+                    {spinner ? <SpinnerWrapper><Spin /></SpinnerWrapper> :(
                   
                     stores.map((store) => (
                         <StoreCard key={store.storeID}>
