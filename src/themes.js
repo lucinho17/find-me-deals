@@ -1,37 +1,37 @@
 export const lightTheme = {
-  body: '#f0f2f5',
-  text: '#333',
-  cardBackground: '#fff',
+  body: '#F7FFF7', // Mint Cream
+  text: '#1A535C', // Midnight Green
+  cardBackground: '#FFFFFF',
   button: {
-    background: '#007bff',
-    text: 'white',
-    hover: '#0056b3',
+    background: '#FF6B6B', // Bittersweet
+    text: '#FFFFFF',
+    hover: '#E56060',
   },
   dealLink: {
-    background: '#ffc107',
-    text: '#212529',
-    hover: '#e0a800',
+    background: '#FFE66D', // Maize
+    text: '#1A535C',
+    hover: '#E6CF62',
   },
   input: {
-    border: '#ccc',
+    border: '#4ECDC4', // Medium Turquoise
   }
 };
 
 export const darkTheme = {
-  body: '#1a1a1a',
-  text: '#f0f2f5',
-  cardBackground: '#2a2a2a',
+  body: '#1A535C', // Midnight Green
+  text: '#F7FFF7', // Mint Cream
+  cardBackground: '#246B75', // Slightly lighter Midnight Green for depth
   button: {
-    background: '#007bff',
-    text: 'white',
-    hover: '#0056b3',
+    background: '#FF6B6B', // Bittersweet
+    text: '#FFFFFF',
+    hover: '#E56060',
   },
   dealLink: {
-    background: '#ffc107',
-    text: '#212529',
-    hover: '#e0a800',
+    background: '#FFE66D', // Maize
+    text: '#1A535C',
+    hover: '#E6CF62',
   },
   input: {
-    border: '#555',
+    border: '#4ECDC4', // Medium Turquoise
   }
 };
