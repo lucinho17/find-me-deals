@@ -4,6 +4,7 @@ import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import App from './App.jsx';
 import Stores from './Stores.jsx';
 import BestDeals from './BestDeals.jsx';
+import Auth from './Auth.jsx';
 import { lightTheme, darkTheme } from './themes.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 const GlobalStyle = createGlobalStyle`
@@ -79,6 +80,7 @@ function Routing() {
         <NavLink to="/find-me-deals/">Deals</NavLink>
         <NavLink to="/find-me-deals/stores">Stores</NavLink>
         <NavLink to="/find-me-deals/best-deals">Best Deals</NavLink>
+        <NavLink to="/find-me-deals/login">Login</NavLink>
       </Nav>
       <Routes>
         <Route
@@ -92,6 +94,10 @@ function Routing() {
         <Route
           path="/find-me-deals/best-deals"
           element={<BestDeals />}
+        />
+        <Route
+          path="/find-me-deals/login"
+          element={<Auth />}
         />
       </Routes>
     </ThemeProvider>
