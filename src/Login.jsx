@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const AuthWrapper = styled.div`
   max-width: 400px;
@@ -62,10 +63,11 @@ const ErrorMessage = styled.p`
   margin-top: 1rem;
 `;
 
-function Login({ onShowRegister }) {
+function Login({ onShowRegister, setUser }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,9 +85,8 @@ function Login({ onShowRegister }) {
         throw new Error(data.error || 'An error occurred during login');
       }
 
-      alert('Login Successful: ' + data.message);
-      console.log('User data:', data.user);
-      // Here you would typically save the user session/token
+      setUser(data.user);
+      navigate('/find-me-deals/');
     } catch (err) {
       setError(err.message);
     }

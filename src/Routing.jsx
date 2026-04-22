@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link, useNavigate } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import App from './App.jsx';
 import Stores from './Stores.jsx';
@@ -42,6 +42,23 @@ const NavLink = styled(Link)`
   }
 `;
 
+const UserButton = styled.button`
+  background: none;
+  border: none;
+  text-decoration: none;
+  color: ${(props) => props.theme.text};
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  font-size: 1rem;
+
+  &:hover {
+    background-color: ${(props) => props.theme.button.hover};
+    color: ${(props) => props.theme.button.text};
+  }
+`;
+
 const ThemeToggler = styled.button`
   position: fixed;
   top: 20px;
@@ -63,9 +80,18 @@ const ThemeToggler = styled.button`
 
 function Routing() {
   const [theme, setTheme] = useState('light');
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to log out?')) {
+      setUser(null);
+      navigate('/find-me-deals/login');
+    }
   };
 
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
@@ -80,7 +106,11 @@ function Routing() {
         <NavLink to="/find-me-deals/">Deals</NavLink>
         <NavLink to="/find-me-deals/stores">Stores</NavLink>
         <NavLink to="/find-me-deals/best-deals">Best Deals</NavLink>
-        <NavLink to="/find-me-deals/login">Login</NavLink>
+        {user ? (
+          <UserButton onClick={handleLogout}>{user.username}</UserButton>
+        ) : (
+          <NavLink to="/find-me-deals/login">Login</NavLink>
+        )}
       </Nav>
       <Routes>
         <Route
@@ -97,7 +127,7 @@ function Routing() {
         />
         <Route
           path="/find-me-deals/login"
-          element={<Auth />}
+          element={<Auth setUser={setUser} />}
         />
       </Routes>
     </ThemeProvider>

@@ -10,7 +10,7 @@ const AuthContainer = styled.div`
   min-height: 60vh;
 `;
 
-function Auth() {
+function Auth({ setUser }) {
   const [isRegistering, setIsRegistering] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ function Auth() {
       {isRegistering ? (
         <Register onShowLogin={() => setIsRegistering(false)} />
       ) : (
-        <Login onShowRegister={() => setIsRegistering(true)} />
+        <Login onShowRegister={() => setIsRegistering(true)} setUser={setUser} />
       )}
     </AuthContainer>
   );
