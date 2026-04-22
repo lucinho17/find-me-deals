@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Route, Routes, Link, useNavigate } from 'react-router-dom';
 import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import App from './App.jsx';
@@ -7,6 +7,7 @@ import BestDeals from './BestDeals.jsx';
 import Auth from './Auth.jsx';
 import { lightTheme, darkTheme } from './themes.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${(props) => props.theme.body};
@@ -42,6 +43,11 @@ const NavLink = styled(Link)`
   }
 `;
 
+const DropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
 const UserButton = styled.button`
   background: none;
   border: none;
@@ -52,6 +58,36 @@ const UserButton = styled.button`
   transition: background-color 0.2s;
   cursor: pointer;
   font-size: 1rem;
+
+  &:hover {
+    background-color: ${(props) => props.theme.button.hover};
+    color: ${(props) => props.theme.button.text};
+  }
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: ${(props) => props.theme.cardBackground};
+  min-width: 120px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  z-index: 1001;
+  margin-top: 0.5rem;
+`;
+
+const DropdownItem = styled.button`
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: none;
+  color: ${(props) => props.theme.text};
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
 
   &:hover {
     background-color: ${(props) => props.theme.button.hover};
@@ -81,6 +117,8 @@ const ThemeToggler = styled.button`
 function Routing() {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const toggleTheme = () => {
@@ -88,11 +126,27 @@ function Routing() {
   };
 
   const handleLogout = () => {
-    if (window.confirm('Are you sure you want to log out?')) {
-      setUser(null);
-      navigate('/find-me-deals/login');
-    }
+    setUser(null);
+    setShowDropdown(false);
+    navigate('/find-me-deals/login');
   };
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const currentTheme = theme === 'light' ? lightTheme : darkTheme;
 
@@ -107,7 +161,14 @@ function Routing() {
         <NavLink to="/find-me-deals/stores">Stores</NavLink>
         <NavLink to="/find-me-deals/best-deals">Best Deals</NavLink>
         {user ? (
-          <UserButton onClick={handleLogout}>{user.username}</UserButton>
+          <DropdownContainer ref={dropdownRef}>
+            <UserButton onClick={toggleDropdown}>{user.username}</UserButton>
+            {showDropdown && (
+              <DropdownMenu>
+                <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+              </DropdownMenu>
+            )}
+          </DropdownContainer>
         ) : (
           <NavLink to="/find-me-deals/login">Login</NavLink>
         )}
