@@ -57,15 +57,45 @@ const SecondaryButton = styled(Button)`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: #ff4d4d;
+  margin-top: 1rem;
+`;
+
+const SuccessMessage = styled.p`
+  color: #28a745;
+  margin-top: 1rem;
+`;
+
 function Register({ onShowLogin }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Register attempt:', { username, email, password });
-    // In a real app, this would call an API
+    setError('');
+    setSuccess('');
+    try {
+      const response = await fetch('http://localhost:5000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'An error occurred during registration');
+      }
+
+      setSuccess(data.message);
+      setTimeout(() => onShowLogin(), 2000); // Redirect to login after 2s
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -95,6 +125,8 @@ function Register({ onShowLogin }) {
         />
         <Button type="submit">Create Account</Button>
       </Form>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {success && <SuccessMessage>{success}</SuccessMessage>}
       <hr style={{ margin: '1.5rem 0' }} />
       <p style={{ color: 'inherit' }}>Already have an account?</p>
       <SecondaryButton onClick={onShowLogin}>Back to Login</SecondaryButton>

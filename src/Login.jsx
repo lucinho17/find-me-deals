@@ -57,14 +57,38 @@ const SecondaryButton = styled(Button)`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: #ff4d4d;
+  margin-top: 1rem;
+`;
+
 function Login({ onShowRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { username, password });
-    // In a real app, this would call an API
+    setError('');
+    try {
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'An error occurred during login');
+      }
+
+      alert('Login Successful: ' + data.message);
+      console.log('User data:', data.user);
+      // Here you would typically save the user session/token
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   return (
@@ -87,6 +111,7 @@ function Login({ onShowRegister }) {
         />
         <Button type="submit">Login</Button>
       </Form>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <hr style={{ margin: '1.5rem 0' }} />
       <p style={{ color: 'inherit' }}>Don't have an account?</p>
       <SecondaryButton onClick={onShowRegister}>Register</SecondaryButton>
