@@ -110,13 +110,30 @@ const ViewDealLink = styled.a`
   border-radius: 20px;
   font-weight: bold;
   transition: background-color 0.2s;
+  margin-right: 0.5rem;
 
   &:hover {
     background-color: ${(props) => props.theme.dealLink.hover};
   }
 `;
 
-function App() {
+const FavoriteButton = styled.button`
+  background-color: ${(props) => props.$isFavorite ? '#ff4d4d' : 'transparent'};
+  color: ${(props) => props.$isFavorite ? 'white' : props.theme.dealLink.background};
+  border: 2px solid ${(props) => props.theme.dealLink.background};
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: ${(props) => props.$isFavorite ? '#cc0000' : props.theme.dealLink.background};
+    color: white;
+  }
+`;
+
+function App({ user, setUser }) {
   const [gameName, setGameName] = useState('');
   const [gameData, setGameData] = useState([]);
   const [order, setOrder] = useState('asc');
@@ -139,6 +156,33 @@ function App() {
     
   }
 
+  const toggleFavorite = async (game) => {
+    if (!user) {
+      alert("Please login to add favorites.");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: user.username, game })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      setUser({ ...user, favorites: data.favorites });
+    } catch (err) {
+      alert("Error updating favorites: " + err.message);
+    }
+  };
+
+  const isGameFavorite = (game) => {
+    if (!user || !user.favorites) return false;
+    const gameId = game.gameID || game.id || game.title;
+    return user.favorites.some(f => (f.gameID || f.id || f.title) === gameId);
+  };
   
   function toggleOrder() {
     setOrder(order === 'asc' ? 'desc' : 'asc');
@@ -184,6 +228,14 @@ function App() {
                   <ViewDealLink href={`https://www.cheapshark.com/redirect?dealID=${game.cheapestDealID}`} target='_blank' rel="noopener noreferrer">
                     View Deal
                   </ViewDealLink>
+                  {user && (
+                    <FavoriteButton 
+                      onClick={() => toggleFavorite(game)}
+                      $isFavorite={isGameFavorite(game)}
+                    >
+                      {isGameFavorite(game) ? '♥ Favorited' : '♡ Add to Favorites'}
+                    </FavoriteButton>
+                  )}
                 </GameInfo>
               </GameCard>
             ))}

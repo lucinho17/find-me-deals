@@ -5,6 +5,7 @@ import App from './App.jsx';
 import Stores from './Stores.jsx';
 import BestDeals from './BestDeals.jsx';
 import Auth from './Auth.jsx';
+import Favorites from './Favorites.jsx';
 import { lightTheme, darkTheme } from './themes.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -131,6 +132,11 @@ function Routing() {
     navigate('/find-me-deals/login');
   };
 
+  const handleFavoritesClick = () => {
+    setShowDropdown(false);
+    navigate('/find-me-deals/favorites');
+  };
+
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
@@ -165,6 +171,7 @@ function Routing() {
             <UserButton onClick={toggleDropdown}>{user.username}</UserButton>
             {showDropdown && (
               <DropdownMenu>
+                <DropdownItem onClick={handleFavoritesClick}>Favorites</DropdownItem>
                 <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
               </DropdownMenu>
             )}
@@ -176,7 +183,7 @@ function Routing() {
       <Routes>
         <Route
           path="/find-me-deals/"
-          element={<App />}
+          element={<App user={user} setUser={setUser} />}
         />
         <Route
           path="/find-me-deals/stores"
@@ -189,6 +196,10 @@ function Routing() {
         <Route
           path="/find-me-deals/login"
           element={<Auth setUser={setUser} />}
+        />
+        <Route
+          path="/find-me-deals/favorites"
+          element={<Favorites user={user} setUser={setUser} />}
         />
       </Routes>
     </ThemeProvider>
